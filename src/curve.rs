@@ -1,12 +1,10 @@
-use super::lerp;
+use lerp::Lerp;
 
 pub struct Curve(Vec<f32>);
 
 impl Curve {
-    pub fn new(values: &[f32]) -> Curve {
-        Curve {
-            0: values.into(),
-        }
+    pub fn new<T: Into<Vec<f32>>>(values: T) -> Curve {
+        Curve(values.into())
     }
 
     pub fn lerp(&self, factor: f32) -> f32 {
@@ -17,9 +15,9 @@ impl Curve {
                 let factor_scaled = factor * (len - 1) as f32;
                 let start = self.0[factor_scaled as usize];
                 let end = self.0[(factor_scaled + 1.0) as usize];
-                let factor_new = factor_scaled - (factor_scaled as u32) as f32;
+                let factor_new: f32 = Factor::new(factor_scaled).into();
 
-                lerp(start, end, factor_new)
+                start.lerp(end, factor_new)
             } else if len > 0 {
                 self.0[len - 1]
             } else {
@@ -32,3 +30,5 @@ impl Curve {
         }
     }
 }
+
+
